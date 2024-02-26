@@ -22,15 +22,15 @@ namespace ProjetoLivraria.Livraria
                 this.CarregaDados();
         }
 
-        public BindingList<Categorias> ListaCategoria
+        public List<Categorias> ListaCategoria
         {
             get
             {
                
-                if ((BindingList<Categorias>)ViewState["ViewStateListaCategoria"] == null)
+                if ((List<Categorias>)ViewState["ViewStateListaCategoria"] == null)
                     this.CarregaDados();
                
-                return (BindingList<Categorias>)ViewState["ViewStateListaCategoria"];
+                return (List<Categorias>)ViewState["ViewStateListaCategoria"];
             }
             set
             {
@@ -43,9 +43,9 @@ namespace ProjetoLivraria.Livraria
             try
             {
                
-                this.ListaCategoria = this.ioCategoriaDAO.BuscaCategorias();
-          
-                this.gvGerenciamentoCategoria.DataSource = this.ListaCategoria.OrderBy(ioCategoria => ioCategoria.TIL_DS_DESCRICAO);
+                this.ListaCategoria = this.ioCategoriaDAO.BuscaCategorias().OrderBy(loCategoria => loCategoria.TIL_DS_DESCRICAO).ToList();
+
+                this.gvGerenciamentoCategoria.DataSource = this.ListaCategoria;
                 
                 this.gvGerenciamentoCategoria.DataBind();
             }
@@ -182,6 +182,12 @@ namespace ProjetoLivraria.Livraria
         {
             get { return (Categorias)Session["sessionCategoriaSelecionado"]; }
             set { Session["sessionCategoriaSelecionado"] = value; }
+        }
+
+        protected void gvGerenciamentoCategoria_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            this.gvGerenciamentoCategoria.PageIndex = e.NewPageIndex;
+            this.CarregaDados();
         }
     }
 }

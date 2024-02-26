@@ -3,6 +3,7 @@
 using ProjetoLivraria.DAO;
 using ProjetoLivraria.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
@@ -18,15 +19,16 @@ namespace ProjetoLivraria.Livraria
         public CategoriaDAO ioCategoriaDAO = new CategoriaDAO();
         public LivroAutorDAO ioLivroAutorDAO = new LivroAutorDAO();
         public AutoresDAO ioAutoresDAO = new AutoresDAO();
-        public BindingList<Livros> ListaLivros
+
+        public List<Livros> ListaLivros
         {
             get
             {
               
-                if ((BindingList<Livros>)ViewState["ViewStateListaLivros"] == null)
+                if ((List<Livros>)ViewState["ViewStateListaLivros"] == null)
                     this.CarregaDados();
                 
-                return (BindingList<Livros>)ViewState["ViewStateListaLivros"];
+                return (List<Livros>)ViewState["ViewStateListaLivros"];
             }
             set
             {
@@ -41,7 +43,6 @@ namespace ProjetoLivraria.Livraria
                 PopularDropDownListEditor();
                 PopularDropDownListAutor();
 
-
                 if (AutorSessao != null)
                 {
                     this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao.aut_id_autor);
@@ -51,10 +52,11 @@ namespace ProjetoLivraria.Livraria
                     this.ListaLivros = this.ioLivroDAO.BuscaLivros();
                 }
 
-                gvGerenciamentoLivros.DataSource = this.ListaLivros.OrderBy(loLivro => loLivro.Liv_Nm_Titulo);
-                gvGerenciamentoLivros.DataBind();
+                this.CarregaDados();
             }
         }
+
+
 
         private void PopularDropDownListCategoria()
         {
@@ -116,9 +118,9 @@ namespace ProjetoLivraria.Livraria
             try
             {
               
-                this.ListaLivros = this.ioLivroDAO.BuscaLivros();    
-                           
-                this.gvGerenciamentoLivros.DataSource = this.ListaLivros.OrderBy(loLivro => loLivro.Liv_Nm_Titulo);
+                this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(ioLivro => ioLivro.Liv_Nm_Titulo).ToList();
+
+                this.gvGerenciamentoLivros.DataSource = this.ListaLivros;
 
                 this.gvGerenciamentoLivros.DataBind();
             }
@@ -177,6 +179,8 @@ namespace ProjetoLivraria.Livraria
             get { return (Autores)Session["SessionAutorSelecionado"]; }
             set { Session["SessionAutorSelecionado"] = value; }
         }
+
+
         protected void gvGerenciamentoLivros_RowEditing(object sender, GridViewEditEventArgs e)
         {
             this.gvGerenciamentoLivros.EditIndex = e.NewEditIndex;
@@ -252,17 +256,7 @@ namespace ProjetoLivraria.Livraria
         protected void gvGerenciamentoLivros_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "CarregaLivrosAutor")
-            {
-                
-                if (AutorSessao != null)
-                {
-                    this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao.aut_id_autor);
-                }
-                else
-                {
-                    this.ListaLivros = this.ioLivroDAO.BuscaLivros();
-                }
-
+            {     
                 gvGerenciamentoLivros.DataSource = this.ListaLivros;
                 gvGerenciamentoLivros.DataBind();
             }
@@ -331,6 +325,8 @@ namespace ProjetoLivraria.Livraria
             CarregaDados(); 
         }
 
+       
 
+        
     }
 }

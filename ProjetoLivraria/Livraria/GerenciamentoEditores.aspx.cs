@@ -14,13 +14,13 @@ namespace ProjetoLivraria.Livraria
     {
         EditoresDAO ioEditoresDAO = new EditoresDAO();
 
-        public BindingList<Editores> ListaEditores
+        public List<Editores> ListaEditores
         {
             get
             {
-                if ((BindingList<Editores>)ViewState["ViewStateListaEditores"] == null)
+                if ((List<Editores>)ViewState["ViewStateListaEditores"] == null)
                     this.CarregaDados();
-                return (BindingList<Editores>)ViewState["ViewStateListaEditores"];
+                return (List<Editores>)ViewState["ViewStateListaEditores"];
             }
             set
             {
@@ -38,8 +38,8 @@ namespace ProjetoLivraria.Livraria
         {
             try
             {
-                this.ListaEditores = this.ioEditoresDAO.BuscaEditores();
-                this.gvGerenciamentoEditores.DataSource = this.ListaEditores.OrderBy(loEditor => loEditor.EDI_NM_EDITOR);
+                this.ListaEditores = this.ioEditoresDAO.BuscaEditores().OrderBy(loEditor => loEditor.EDI_NM_EDITOR).ToList();
+                this.gvGerenciamentoEditores.DataSource = this.ListaEditores;
                 this.gvGerenciamentoEditores.DataBind();
             }
             catch
@@ -185,6 +185,12 @@ namespace ProjetoLivraria.Livraria
             {
                 Session["EditorSessao"] = value;
             }
+        }
+
+        protected void gvGerenciamentoEditores_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            this.gvGerenciamentoEditores.PageIndex = e.NewPageIndex;
+            this.CarregaDados();
         }
     }
 }

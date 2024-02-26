@@ -13,9 +13,9 @@ namespace ProjetoLivraria.DAO
         SqlConnection ioConexao;
         LivroAutorDAO livroAutorDAO = new LivroAutorDAO();
 
-        public BindingList<Livros> BuscaLivros(decimal? adcIdLivro = null)
+        public List<Livros> BuscaLivros(decimal? adcIdLivro = null)
         {
-            BindingList<Livros> loListLivros = new BindingList<Livros>();
+            List<Livros> loListLivros = new List<Livros>();
 
             using (ioConexao = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString))
             {
@@ -149,9 +149,9 @@ namespace ProjetoLivraria.DAO
             return liQtdLinhasAtualizadas;
         }
 
-        public BindingList<Livros> FindLivrosByAutor(decimal? adcIdAutor = null)
+        public List<Livros> FindLivrosByAutor(decimal? adcIdAutor = null)
         {
-            BindingList<Livros> loListLivros = new BindingList<Livros>();
+            List<Livros> loListLivros = new List<Livros>();
 
             using (ioConexao = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString))
             {
@@ -160,7 +160,7 @@ namespace ProjetoLivraria.DAO
                     ioConexao.Open();
                     if (adcIdAutor != null)
                     {
-                        ioQuery = new SqlCommand(@"SELECT livro.*
+                        ioQuery = new SqlCommand(@"SELECT *
                                           FROM LIV_LIVROS livro
                                           INNER JOIN LIA_LIVRO_AUTOR livroAutor ON livro.LIV_ID_LIVRO = livroAutor.LIA_ID_LIVRO
                                           INNER JOIN AUT_AUTORES autor ON livroAutor.LIA_ID_AUTOR = autor.AUT_ID_AUTOR

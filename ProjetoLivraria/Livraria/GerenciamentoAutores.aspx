@@ -48,7 +48,7 @@
         <asp:GridView ID="gvGerenciamentoAutores" runat="server" Width="100%" AutoGenerateColumns="False" Font-Size="14px" CellPadding="4"
             ForeColor="#333333" GridLines="None" OnRowCancelingEdit="gvGerenciamentoAutores_RowCancelingEdit"
             OnRowEditing="gvGerenciamentoAutores_RowEditing" OnRowUpdating="gvGerenciamentoAutores_RowUpdating"
-            OnRowDeleting="gvGerenciamentoAutores_RowDeleting" OnRowCommand="gvGerenciamentoAutores_RowCommand">
+            OnRowDeleting="gvGerenciamentoAutores_RowDeleting" OnRowCommand="gvGerenciamentoAutores_RowCommand" AllowPaging="True" OnPageIndexChanging="gvGerenciamentoAutores_PageIndexChanging">
             <Columns>
                 <asp:TemplateField Visible="false">
                     <EditItemTemplate>

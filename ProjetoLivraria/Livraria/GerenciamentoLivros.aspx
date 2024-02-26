@@ -93,7 +93,7 @@
         <asp:GridView ID="gvGerenciamentoLivros" runat="server" Width="100%" AutoGenerateColumns="false" Font-Size="14px" CellPadding="4"
             ForeColor="#333333" GridLines="None" OnRowCancelingEdit="gvGerenciamentoLivros_RowCancelingEdit"
             OnRowEditing="gvGerenciamentoLivros_RowEditing" OnRowUpdating="gvGerenciamentoLivros_RowUpdating"
-            OnRowDeleting="gvGerenciamentoLivros_RowDeleting" OnRowCommand="gvGerenciamentoLivros_RowCommand" OnRowDataBound="gvGerenciamentoLivros_RowDataBound">
+            OnRowDeleting="gvGerenciamentoLivros_RowDeleting" OnRowCommand="gvGerenciamentoLivros_RowCommand" OnRowDataBound="gvGerenciamentoLivros_RowDataBound" AllowPaging="True" OnPageIndexChanging="gvGerenciamentoLivros_PageIndexChanging">
             <Columns>
                 <asp:TemplateField Visible="false">
                     <EditItemTemplate>
@@ -120,7 +120,6 @@
                         <asp:Label ID="lblNomeLivro" runat="server" Style="text-align: Left;" Text='<%# Eval("Liv_Nm_Titulo") %>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="center" Width="350px" />
-                    <ItemStyle HorizontalAlign="Left" />
                 </asp:TemplateField>
 
                 <asp:TemplateField>

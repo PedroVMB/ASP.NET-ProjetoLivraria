@@ -14,15 +14,14 @@ namespace ProjetoLivraria.Livraria
     {
         AutoresDAO ioAutoresDAO = new AutoresDAO();
 
-        public BindingList<Autores> ListaAutores
+        public List<Autores> ListaAutores
         {
             get
             {
-               
-                if ((BindingList<Autores>)ViewState["ViewStateListaAutores"] == null)
+                if ((List<Autores>)ViewState["ViewStateListaAutores"] == null)
                     this.CarregaDados();
-                
-                return (BindingList<Autores>)ViewState["ViewStateListaAutores"];
+
+                return (List<Autores>)ViewState["ViewStateListaAutores"];
             }
             set
             {
@@ -38,20 +37,18 @@ namespace ProjetoLivraria.Livraria
         }
 
 
+
         private void CarregaDados()
         {
             try
             {
-               
-                this.ListaAutores = this.ioAutoresDAO.BuscaAutores();
-               
-                this.gvGerenciamentoAutores.DataSource = this.ListaAutores.OrderBy(loAutor => loAutor.aut_nm_nome);
-               
+                this.ListaAutores = this.ioAutoresDAO.BuscaAutores().OrderBy(loAutor => loAutor.aut_nm_nome).ToList();
+                this.gvGerenciamentoAutores.DataSource = this.ListaAutores;
                 this.gvGerenciamentoAutores.DataBind();
             }
-            catch
+            catch (Exception ex)
             {
-                HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Autores.');</script>");
+                HttpContext.Current.Response.Write($"<script>alert('Falha ao tentar recuperar Autores - {ex.Message}');</script>");
             }
         }
 
@@ -139,7 +136,7 @@ namespace ProjetoLivraria.Livraria
             {
                 GridViewRow loRGridViewRow = this.gvGerenciamentoAutores.Rows[e.RowIndex];
                 decimal ldcIdAutor = Convert.ToDecimal((this.gvGerenciamentoAutores.Rows[e.RowIndex].FindControl("lblIdAutor") as
-               Label).Text);
+                Label).Text);
                 Autores loAutor = this.ioAutoresDAO.BuscaAutores(ldcIdAutor).FirstOrDefault();
                 if (loAutor != null)
                 {
@@ -147,9 +144,9 @@ namespace ProjetoLivraria.Livraria
                     LivrosDAO loLivrosDAO = new LivrosDAO();
                     if (loLivrosDAO.FindLivrosByAutor(loAutor.aut_id_autor).Count != 0)
                     {
-                        HttpContext.Current.Response.Write(@"<script>alert('Não é possível remover o autor selecionado pois existem livros
-                       associados a ele.');</script>");
-                    }else
+                        HttpContext.Current.Response.Write("<script>alert('Não é possível remover o autor selecionado pois existem livros associados a ele.');</script>");
+                    }
+                    else
                     {
                         this.ioAutoresDAO.RemoveAutor(loAutor);
                         this.CarregaDados();
@@ -193,8 +190,10 @@ namespace ProjetoLivraria.Livraria
             set { Session["SessionAutorSelecionado"] = value; }
         }
 
-
-
-
+        protected void gvGerenciamentoAutores_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            this.gvGerenciamentoAutores.PageIndex = e.NewPageIndex;
+            this.CarregaDados();
+        }
     }
 }
