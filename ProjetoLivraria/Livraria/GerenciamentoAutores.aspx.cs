@@ -142,7 +142,7 @@ namespace ProjetoLivraria.Livraria
                 {
                    
                     LivrosDAO loLivrosDAO = new LivrosDAO();
-                    if (loLivrosDAO.FindLivrosByAutor(loAutor.aut_id_autor).Count != 0)
+                    if (loLivrosDAO.FindLivrosByAutor(loAutor).Count != 0)
                     {
                         HttpContext.Current.Response.Write("<script>alert('Não é possível remover o autor selecionado pois existem livros associados a ele.');</script>");
                     }
@@ -195,5 +195,7 @@ namespace ProjetoLivraria.Livraria
             this.gvGerenciamentoAutores.PageIndex = e.NewPageIndex;
             this.CarregaDados();
         }
+
+
     }
 }

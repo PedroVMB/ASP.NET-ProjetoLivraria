@@ -149,50 +149,155 @@ namespace ProjetoLivraria.DAO
             return liQtdLinhasAtualizadas;
         }
 
-        public List<Livros> FindLivrosByAutor(decimal? adcIdAutor = null)
+        public BindingList<Livros> FindLivrosByEditores(Editores editor)
         {
-            List<Livros> loListLivros = new List<Livros>();
+            BindingList<Livros> loListLivros = new BindingList<Livros>();
 
             using (ioConexao = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString))
             {
                 try
                 {
                     ioConexao.Open();
-                    if (adcIdAutor != null)
-                    {
-                        ioQuery = new SqlCommand(@"SELECT *
-                                          FROM LIV_LIVROS livro
-                                          INNER JOIN LIA_LIVRO_AUTOR livroAutor ON livro.LIV_ID_LIVRO = livroAutor.LIA_ID_LIVRO
-                                          INNER JOIN AUT_AUTORES autor ON livroAutor.LIA_ID_AUTOR = autor.AUT_ID_AUTOR
-                                          WHERE autor.AUT_ID_AUTOR = @idAutor", ioConexao);
 
-                        ioQuery.Parameters.Add(new SqlParameter("@idAutor", adcIdAutor));
+                    if (editor != null && editor.EDI_ID_EDITOR != null)
+                    {
+                        ioQuery = new SqlCommand(@"SELECT * FROM LIV_LIVROS WHERE liv_id_editor = @idEditor", ioConexao);
+
+                        ioQuery.Parameters.Add(new SqlParameter("@idEditor", editor.EDI_ID_EDITOR));
+
+                        using (SqlDataReader loReader = ioQuery.ExecuteReader())
+                        {
+                            while (loReader.Read())
+                            {
+                                // Preenche os campos do livro com os valores lidos do banco de dados
+                                Livros loNovoLivro = new Livros(
+                                    loReader.GetDecimal(loReader.GetOrdinal("LIV_ID_LIVRO")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_id_tipo_livro")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_id_editor")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_nm_titulo")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_vl_preco")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_pc_royalty")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_ds_resumo")),
+                                    loReader.GetInt32(loReader.GetOrdinal("liv_nu_edicao"))
+                                );
+
+                                loListLivros.Add(loNovoLivro);
+                            }
+                        }
                     }
                     else
                     {
-                        throw new Exception("ID do autor não fornecido.");
-                    }
-
-                    using (SqlDataReader loReader = ioQuery.ExecuteReader())
-                    {
-                        while (loReader.Read())
-                        {
-                            
-                            Livros loNovoLivro = new Livros(loReader.GetDecimal(0), 0, 0, "", 0, 0, "", 0);
-                            loListLivros.Add(loNovoLivro);
-                        }
-                        loReader.Close();
+                        throw new Exception("Objeto Editor não fornecido ou sem ID.");
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw new Exception("Erro ao tentar buscar os livros por autor.");
+                    throw new Exception("Erro ao tentar buscar os livros por editor. Detalhes: " + ex.Message, ex);
                 }
             }
+
+            return loListLivros;
+        }
+        public BindingList<Livros> FindLivrosByTipos(Categorias categoria)
+        {
+            BindingList<Livros> loListLivros = new BindingList<Livros>();
+
+            using (ioConexao = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString))
+            {
+                try
+                {
+                    ioConexao.Open();
+
+                    if (categoria != null && categoria.TIL_ID_TIPO_LIVRO != null)
+                    {
+                        ioQuery = new SqlCommand(@"SELECT * FROM LIV_LIVROS WHERE liv_id_tipo_livro = @idTipo", ioConexao);
+
+                        ioQuery.Parameters.Add(new SqlParameter("@idTipo", categoria.TIL_ID_TIPO_LIVRO));
+
+                        using (SqlDataReader loReader = ioQuery.ExecuteReader())
+                        {
+                            while (loReader.Read())
+                            {
+                                // Preenche os campos do livro com os valores lidos do banco de dados
+                                Livros loNovoLivro = new Livros(
+                                    loReader.GetDecimal(loReader.GetOrdinal("LIV_ID_LIVRO")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_id_tipo_livro")),
+                                     loReader.GetDecimal(loReader.GetOrdinal("liv_id_editor")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_nm_titulo")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_vl_preco")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_pc_royalty")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_ds_resumo")),
+                                    loReader.GetInt32(loReader.GetOrdinal("liv_nu_edicao"))
+                                );
+
+                                loListLivros.Add(loNovoLivro);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Objeto TipoLivro não fornecido ou sem ID.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Erro ao tentar buscar os livros por tipo. Detalhes: " + ex.Message, ex);
+                }
+            }
+
+            return loListLivros;
+        }
+        public BindingList<Livros> FindLivrosByAutor(Autores autor)
+        {
+            BindingList<Livros> loListLivros = new BindingList<Livros>();
+
+            using (ioConexao = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString))
+            {
+                try
+                {
+                    ioConexao.Open();
+
+                    if (autor != null && autor.aut_id_autor != null)
+                    {
+
+                        ioQuery = new SqlCommand("SELECT L.* FROM LIV_LIVROS L INNER JOIN LIA_LIVRO_AUTOR LA ON L.LIV_ID_LIVRO = LA.LIA_ID_LIVRO WHERE LA.LIA_ID_AUTOR = @idAutor", ioConexao);
+                        ioQuery.Parameters.Add(new SqlParameter("@idAutor", autor.aut_id_autor));
+
+                        using (SqlDataReader loReader = ioQuery.ExecuteReader())
+                        {
+                            while (loReader.Read())
+                            {
+                                
+                                Livros loNovoLivro = new Livros(
+                                    loReader.GetDecimal(loReader.GetOrdinal("LIV_ID_LIVRO")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_id_tipo_livro")),
+                                     loReader.GetDecimal(loReader.GetOrdinal("liv_id_editor")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_nm_titulo")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_vl_preco")),
+                                    loReader.GetDecimal(loReader.GetOrdinal("liv_pc_royalty")),
+                                    loReader.GetString(loReader.GetOrdinal("liv_ds_resumo")),
+                                    loReader.GetInt32(loReader.GetOrdinal("liv_nu_edicao"))
+                                );
+
+                                loListLivros.Add(loNovoLivro);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Objeto Autor não fornecido ou sem ID.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Erro ao tentar buscar os livros por autor. Detalhes: " + ex.Message, ex);
+                }
+            }
+
             return loListLivros;
         }
 
-        public BindingList<Livros> FindLivrosByTipo(decimal idTipoLivro)
+        public BindingList<Livros> FindLivrosByCategoria(decimal idTipoLivro)
         {
             BindingList<Livros> loListLivros = new BindingList<Livros>();
 

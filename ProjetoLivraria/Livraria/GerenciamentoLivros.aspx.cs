@@ -37,27 +37,12 @@ namespace ProjetoLivraria.Livraria
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+
+            if (!this.IsPostBack)
             {
-                PopularDropDownListCategoria();
-                PopularDropDownListEditor();
-                PopularDropDownListAutor();
-
-                if (AutorSessao != null)
-                {
-                    this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao.aut_id_autor);
-                }
-                else
-                {
-                    this.ListaLivros = this.ioLivroDAO.BuscaLivros();
-                }
-
-                this.CarregaDados();
+                CarregaDados();
             }
         }
-
-
-
         private void PopularDropDownListCategoria()
         {
 
@@ -113,22 +98,55 @@ namespace ProjetoLivraria.Livraria
            
             ddlAutor.Items.Insert(0, new ListItem("Selecione...", ""));
         }
+        private void CarregarDropDownList() { 
+}
         private void CarregaDados()
         {
             try
             {
-              
-                this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(ioLivro => ioLivro.Liv_Nm_Titulo).ToList();
 
-                this.gvGerenciamentoLivros.DataSource = this.ListaLivros;
 
+                if (AutorSessao != null) //AutorSelecionado != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao).OrderBy(loLivroAutor => loLivroAutor.Liv_Nm_Titulo).ToList();
+                    //Session.Remove("SessionAutorSelecionado");
+
+                }
+                else if (EditorSessao != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByEditor(EditorSessao.EDI_ID_EDITOR).OrderBy(loLivroEditor => loLivroEditor.Liv_Nm_Titulo).ToList();
+                    //Session.Remove("SessionEditorSelecionado");
+                }
+                else if (CategoriaSessao != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByCategoria(CategoriaSessao.TIL_ID_TIPO_LIVRO).OrderBy(loLivroTipoLivro => loLivroTipoLivro.Liv_Nm_Titulo).ToList();
+                    //Session.Remove("SessionTipoLivroSelecionado");
+                }
+                else
+                {
+                    this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(loLivro => loLivro.Liv_Nm_Titulo).ToList();
+                }
+
+                //AutorSelecionado = AutorSessao;
+                //EditorSelecionado = EditorSessao;
+                //TipoLivroSelecionado = CategoriaSessao;
+
+
+                this.gvGerenciamentoLivros.DataSource = this.ListaLivros/*.OrderBy(loLivro => loLivro.liv_nm_titulo)*/;
                 this.gvGerenciamentoLivros.DataBind();
+
+                PopularDropDownListAutor();
+                PopularDropDownListEditor();
+                PopularDropDownListCategoria();
             }
             catch
             {
-                HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Livros.');</script>");
+                HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Livros!');</script>");
             }
         }
+
+
+
         protected void BtnNovoLivro_Click(object sender, EventArgs e)
         {
             try
@@ -173,14 +191,6 @@ namespace ProjetoLivraria.Livraria
             this.txtCadastroResumoLivro.Text = String.Empty;
             this.txtCadastroEdicaoLivro.Text = String.Empty;
         }
-
-        public Autores AutorSessao
-        {
-            get { return (Autores)Session["SessionAutorSelecionado"]; }
-            set { Session["SessionAutorSelecionado"] = value; }
-        }
-
-
         protected void gvGerenciamentoLivros_RowEditing(object sender, GridViewEditEventArgs e)
         {
             this.gvGerenciamentoLivros.EditIndex = e.NewEditIndex;
@@ -261,7 +271,6 @@ namespace ProjetoLivraria.Livraria
                 gvGerenciamentoLivros.DataBind();
             }
         }
-
         protected string BuscarCategoriaDescricao(object idCategoria)
         {
             if (idCategoria != null)
@@ -278,7 +287,6 @@ namespace ProjetoLivraria.Livraria
 
             return string.Empty;
         }
-
         protected string BuscarNomeEditor(object idEditor)
         {
             if (idEditor != null)
@@ -294,7 +302,6 @@ namespace ProjetoLivraria.Livraria
             }
             return string.Empty;
         }
-
         protected void gvGerenciamentoLivros_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) > 0)
@@ -318,15 +325,27 @@ namespace ProjetoLivraria.Livraria
                 ddlEditAutor.DataBind();
             }
         }
-
         protected void gvGerenciamentoLivros_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             gvGerenciamentoLivros.PageIndex = e.NewPageIndex;
             CarregaDados(); 
         }
+        public Autores AutorSessao
+        {
+            get { return (Autores)Session["SessionAutorSelecionado"]; }
+            set { Session["SessionAutorSelecionado"] = value; }
+        }
+        public Editores EditorSessao
+        {
+            get { return (Editores)Session["SessionEditorSelecionado"]; }
+            set { Session["SessionEditorSelecionado"] = value; }
+        }
+        public Categorias CategoriaSessao
+        {
+            get { return (Categorias)Session["sessionCategoriaSelecionado"]; }
+            set { Session["sessionCategoriaSelecionado"] = value; }
+        }
 
-       
 
-        
     }
 }

@@ -74,6 +74,8 @@
                     <ItemTemplate>
                         <asp:Button ID="btnEditarCategoria" runat="server" CssClass="btn btn-success" Text="Editar" CommandName="Edit" CausesValidation="false" />&nbsp;
                         <asp:Button ID="btnDeletarCategoria" runat="server" CssClass="btn btn-danger" Text="Deletar" CommandName="Delete" CausesValidation="false" OnClientClick="return confirm('Tem certeza que deseja deletar?');"/>
+                        <asp:Button ID="btnCarregaLivrosCategoria" runat="server" CssClass="btn btn-primary" Text="Livros" CommandName="CarregaLivrosCategoria"
+                            CommandArgument="<%# ((GridViewRow) Container).RowIndex %>" CausesValidation="false" />&nbsp;
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Center" Width="250px"></HeaderStyle>
                     <ItemStyle HorizontalAlign="Right"></ItemStyle>

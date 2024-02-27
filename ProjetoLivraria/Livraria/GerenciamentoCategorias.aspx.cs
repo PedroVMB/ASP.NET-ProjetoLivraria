@@ -153,7 +153,7 @@ namespace ProjetoLivraria.Livraria
        
         private bool CategoriaPossuiLivrosAssociados(decimal idCategoria)
         {
-            return this.ioLivrosDAO.FindLivrosByTipo(idCategoria).Count > 0;
+            return this.ioLivrosDAO.FindLivrosByCategoria(idCategoria).Count > 0;
         }
 
         protected void gvGerenciamentoCategoria_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -161,7 +161,7 @@ namespace ProjetoLivraria.Livraria
            
             switch (e.CommandName)
             {
-                case "CarregaLivrosAutor":
+                case "CarregaLivrosCategoria":
                     int liRowIndex = Convert.ToInt32(e.CommandArgument);
                     decimal ldcIdCategoria = Convert.ToDecimal((this.gvGerenciamentoCategoria.Rows[liRowIndex].FindControl("lblIdCategoria") as
                    Label).Text);
