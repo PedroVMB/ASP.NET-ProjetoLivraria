@@ -13,6 +13,42 @@ namespace ProjetoLivraria {
     public partial class SiteMaster {
         
         /// <summary>
+        /// btnAutorRedirect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnAutorRedirect;
+        
+        /// <summary>
+        /// btnCategoriaRedirect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnCategoriaRedirect;
+        
+        /// <summary>
+        /// btnEditorRedirect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnEditorRedirect;
+        
+        /// <summary>
+        /// btnLivroRedirect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnLivroRedirect;
+        
+        /// <summary>
         /// MainContent control.
         /// </summary>
         /// <remarks>

@@ -43,10 +43,10 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a runat="server" href="~/Livraria/GerenciamentoAutores">Gerenciamento de Autores</a></li>
-                        <li><a runat="server" href="~/Livraria/GerenciamentoCategorias">Gerenciamento de Categorias</a></li>
-                        <li><a runat="server" href="~/Livraria/GerenciamentoEditores">Gerenciamento de Editores</a></li>
-                        <li><a runat="server" href="~/Livraria/GerenciamentoLivros">Gerenciamento de Livros</a></li>
+                        <li><asp:LinkButton ID="btnAutorRedirect" OnClick="autorRedirect_ServerClick" runat="server" CausesValidation="false">Gerenciamento de Autores</asp:LinkButton></li>
+                        <li><asp:LinkButton ID="btnCategoriaRedirect" OnClick="categoriaRedirect_ServerClick" runat="server" CausesValidation="false">Gerenciamento de Categorias</asp:LinkButton></li>
+                        <li><asp:LinkButton ID="btnEditorRedirect" OnClick="editorRedirect_ServerClick" runat="server" CausesValidation="false" >Gerenciamento de Editores</asp:LinkButton></li>
+                        <li><asp:LinkButton ID="btnLivroRedirect" OnClick="livroRedirect_ServerClick" runat="server" CausesValidation="false">Gerenciamento de Livros</asp:LinkButton></li>
                     </ul>
                 </div>
             </div>

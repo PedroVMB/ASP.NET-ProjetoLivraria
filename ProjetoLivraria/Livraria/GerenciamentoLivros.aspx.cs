@@ -37,17 +37,11 @@ namespace ProjetoLivraria.Livraria
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!this.IsPostBack)
-            {
                 CarregaDados();
-            }
         }
         private void PopularDropDownListCategoria()
         {
-
-
-
 
             BindingList<Categorias> tiposLivro = new BindingList<Categorias>(
         ioCategoriaDAO.BuscaCategorias().OrderBy(c => c.TIL_DS_DESCRICAO).ToList());
@@ -98,41 +92,30 @@ namespace ProjetoLivraria.Livraria
            
             ddlAutor.Items.Insert(0, new ListItem("Selecione...", ""));
         }
-        private void CarregarDropDownList() { 
-}
         private void CarregaDados()
         {
             try
             {
 
 
-                if (AutorSessao != null) //AutorSelecionado != null)
+                if (AutorSessao != null)
                 {
                     this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao).OrderBy(loLivroAutor => loLivroAutor.Liv_Nm_Titulo).ToList();
-                    //Session.Remove("SessionAutorSelecionado");
-
                 }
                 else if (EditorSessao != null)
                 {
-                    this.ListaLivros = this.ioLivroDAO.FindLivrosByEditor(EditorSessao.EDI_ID_EDITOR).OrderBy(loLivroEditor => loLivroEditor.Liv_Nm_Titulo).ToList();
-                    //Session.Remove("SessionEditorSelecionado");
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByEditor(EditorSessao.EDI_ID_EDITOR).OrderBy(loLivroEditor => loLivroEditor.Liv_Nm_Titulo).ToList(); 
                 }
                 else if (CategoriaSessao != null)
                 {
                     this.ListaLivros = this.ioLivroDAO.FindLivrosByCategoria(CategoriaSessao.TIL_ID_TIPO_LIVRO).OrderBy(loLivroTipoLivro => loLivroTipoLivro.Liv_Nm_Titulo).ToList();
-                    //Session.Remove("SessionTipoLivroSelecionado");
                 }
                 else
                 {
                     this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(loLivro => loLivro.Liv_Nm_Titulo).ToList();
-                }
+                }               
 
-                //AutorSelecionado = AutorSessao;
-                //EditorSelecionado = EditorSessao;
-                //TipoLivroSelecionado = CategoriaSessao;
-
-
-                this.gvGerenciamentoLivros.DataSource = this.ListaLivros/*.OrderBy(loLivro => loLivro.liv_nm_titulo)*/;
+                this.gvGerenciamentoLivros.DataSource = this.ListaLivros;
                 this.gvGerenciamentoLivros.DataBind();
 
                 PopularDropDownListAutor();
@@ -144,14 +127,10 @@ namespace ProjetoLivraria.Livraria
                 HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Livros!');</script>");
             }
         }
-
-
-
         protected void BtnNovoLivro_Click(object sender, EventArgs e)
         {
             try
             {
-                
                 decimal ldcIdLivro = this.ListaLivros.OrderByDescending(l => l.Liv_Id_Livro).First().Liv_Id_Livro + 4;
                 decimal liv_id_tipo_livro = Convert.ToDecimal(ddlCategoria.SelectedValue);
                 decimal liv_id_editor = Convert.ToDecimal(ddlEditor.SelectedValue);
@@ -216,7 +195,6 @@ namespace ProjetoLivraria.Livraria
             decimal idEditor = this.ioEditoresDAO.BuscaIdEditorByNome((this.gvGerenciamentoLivros.Rows[e.RowIndex].FindControl("ddlEditEditor") as DropDownList).SelectedValue);
             decimal idAutor = this.ioAutoresDAO.BuscaIdAutorByNome((this.gvGerenciamentoLivros.Rows[e.RowIndex].FindControl("ddlEditAutor") as DropDownList).SelectedValue);
 
-
             try
             {
                
@@ -278,9 +256,7 @@ namespace ProjetoLivraria.Livraria
                 decimal idCategoriaDecimal;
                 if (decimal.TryParse(idCategoria.ToString(), out idCategoriaDecimal))
                 {
-                    
                     string descricaoCategoria = ioCategoriaDAO.BuscarDescricaoCategoria(idCategoriaDecimal);
-
                     return descricaoCategoria;
                 }
             }
@@ -345,7 +321,5 @@ namespace ProjetoLivraria.Livraria
             get { return (Categorias)Session["sessionCategoriaSelecionado"]; }
             set { Session["sessionCategoriaSelecionado"] = value; }
         }
-
-
     }
 }

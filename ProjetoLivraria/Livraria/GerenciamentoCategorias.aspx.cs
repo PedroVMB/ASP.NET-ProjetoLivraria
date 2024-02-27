@@ -171,7 +171,7 @@ namespace ProjetoLivraria.Livraria
                    
                     this.CategoriaSessao = loCategoria;
 
-                    Response.Redirect("/Livraria/GerenciamentoCategoria");
+                    Response.Redirect("/Livraria/GerenciamentoLivros");
                     break;
                 default:
                     break;

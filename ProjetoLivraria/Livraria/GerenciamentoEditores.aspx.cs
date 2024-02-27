@@ -177,16 +177,8 @@ namespace ProjetoLivraria.Livraria
 
         public Editores EditorSessao
         {
-            get
-            {
-                if (Session["EditorSessao"] == null)
-                    return null;
-                return (Editores)Session["EditorSessao"];
-            }
-            set
-            {
-                Session["EditorSessao"] = value;
-            }
+            get { return (Editores)Session["SessionEditorSelecionado"]; }
+            set { Session["SessionEditorSelecionado"] = value; }
         }
 
         protected void gvGerenciamentoEditores_PageIndexChanging(object sender, GridViewPageEventArgs e)
