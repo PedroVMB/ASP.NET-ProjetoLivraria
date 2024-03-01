@@ -37,32 +37,11 @@ namespace ProjetoLivraria.Livraria
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                PopularDropDownListCategoria();
-                PopularDropDownListEditor();
-                PopularDropDownListAutor();
-
-                if (AutorSessao != null)
-                {
-                    this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao.aut_id_autor);
-                }
-                else
-                {
-                    this.ListaLivros = this.ioLivroDAO.BuscaLivros();
-                }
-
-                this.CarregaDados();
-            }
+            if (!this.IsPostBack)
+                CarregaDados();
         }
-
-
-
         private void PopularDropDownListCategoria()
         {
-
-
-
 
             BindingList<Categorias> tiposLivro = new BindingList<Categorias>(
         ioCategoriaDAO.BuscaCategorias().OrderBy(c => c.TIL_DS_DESCRICAO).ToList());
@@ -117,23 +96,41 @@ namespace ProjetoLivraria.Livraria
         {
             try
             {
-              
-                this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(ioLivro => ioLivro.Liv_Nm_Titulo).ToList();
+
+
+                if (AutorSessao != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByAutor(AutorSessao).OrderBy(loLivroAutor => loLivroAutor.Liv_Nm_Titulo).ToList();
+                }
+                else if (EditorSessao != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByEditor(EditorSessao.EDI_ID_EDITOR).OrderBy(loLivroEditor => loLivroEditor.Liv_Nm_Titulo).ToList(); 
+                }
+                else if (CategoriaSessao != null)
+                {
+                    this.ListaLivros = this.ioLivroDAO.FindLivrosByCategoria(CategoriaSessao.TIL_ID_TIPO_LIVRO).OrderBy(loLivroTipoLivro => loLivroTipoLivro.Liv_Nm_Titulo).ToList();
+                }
+                else
+                {
+                    this.ListaLivros = this.ioLivroDAO.BuscaLivros().OrderBy(loLivro => loLivro.Liv_Nm_Titulo).ToList();
+                }               
 
                 this.gvGerenciamentoLivros.DataSource = this.ListaLivros;
-
                 this.gvGerenciamentoLivros.DataBind();
+
+                PopularDropDownListAutor();
+                PopularDropDownListEditor();
+                PopularDropDownListCategoria();
             }
             catch
             {
-                HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Livros.');</script>");
+                HttpContext.Current.Response.Write("<script>alert('Falha ao tentar recuperar Livros!');</script>");
             }
         }
         protected void BtnNovoLivro_Click(object sender, EventArgs e)
         {
             try
             {
-                
                 decimal ldcIdLivro = this.ListaLivros.OrderByDescending(l => l.Liv_Id_Livro).First().Liv_Id_Livro + 4;
                 decimal liv_id_tipo_livro = Convert.ToDecimal(ddlCategoria.SelectedValue);
                 decimal liv_id_editor = Convert.ToDecimal(ddlEditor.SelectedValue);
@@ -173,14 +170,6 @@ namespace ProjetoLivraria.Livraria
             this.txtCadastroResumoLivro.Text = String.Empty;
             this.txtCadastroEdicaoLivro.Text = String.Empty;
         }
-
-        public Autores AutorSessao
-        {
-            get { return (Autores)Session["SessionAutorSelecionado"]; }
-            set { Session["SessionAutorSelecionado"] = value; }
-        }
-
-
         protected void gvGerenciamentoLivros_RowEditing(object sender, GridViewEditEventArgs e)
         {
             this.gvGerenciamentoLivros.EditIndex = e.NewEditIndex;
@@ -205,7 +194,6 @@ namespace ProjetoLivraria.Livraria
             decimal idCategoria = this.ioCategoriaDAO.BuscaIdCategoriaByNome((this.gvGerenciamentoLivros.Rows[e.RowIndex].FindControl("ddlEditCategoria") as DropDownList).SelectedValue);
             decimal idEditor = this.ioEditoresDAO.BuscaIdEditorByNome((this.gvGerenciamentoLivros.Rows[e.RowIndex].FindControl("ddlEditEditor") as DropDownList).SelectedValue);
             decimal idAutor = this.ioAutoresDAO.BuscaIdAutorByNome((this.gvGerenciamentoLivros.Rows[e.RowIndex].FindControl("ddlEditAutor") as DropDownList).SelectedValue);
-
 
             try
             {
@@ -261,7 +249,6 @@ namespace ProjetoLivraria.Livraria
                 gvGerenciamentoLivros.DataBind();
             }
         }
-
         protected string BuscarCategoriaDescricao(object idCategoria)
         {
             if (idCategoria != null)
@@ -269,16 +256,13 @@ namespace ProjetoLivraria.Livraria
                 decimal idCategoriaDecimal;
                 if (decimal.TryParse(idCategoria.ToString(), out idCategoriaDecimal))
                 {
-                    
                     string descricaoCategoria = ioCategoriaDAO.BuscarDescricaoCategoria(idCategoriaDecimal);
-
                     return descricaoCategoria;
                 }
             }
 
             return string.Empty;
         }
-
         protected string BuscarNomeEditor(object idEditor)
         {
             if (idEditor != null)
@@ -294,7 +278,6 @@ namespace ProjetoLivraria.Livraria
             }
             return string.Empty;
         }
-
         protected void gvGerenciamentoLivros_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow && (e.Row.RowState & DataControlRowState.Edit) > 0)
@@ -318,15 +301,25 @@ namespace ProjetoLivraria.Livraria
                 ddlEditAutor.DataBind();
             }
         }
-
         protected void gvGerenciamentoLivros_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             gvGerenciamentoLivros.PageIndex = e.NewPageIndex;
             CarregaDados(); 
         }
-
-       
-
-        
+        public Autores AutorSessao
+        {
+            get { return (Autores)Session["SessionAutorSelecionado"]; }
+            set { Session["SessionAutorSelecionado"] = value; }
+        }
+        public Editores EditorSessao
+        {
+            get { return (Editores)Session["SessionEditorSelecionado"]; }
+            set { Session["SessionEditorSelecionado"] = value; }
+        }
+        public Categorias CategoriaSessao
+        {
+            get { return (Categorias)Session["sessionCategoriaSelecionado"]; }
+            set { Session["sessionCategoriaSelecionado"] = value; }
+        }
     }
 }

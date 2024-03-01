@@ -7,6 +7,7 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.Identity;
+using ProjetoLivraria.Models;
 
 namespace ProjetoLivraria
 {
@@ -75,6 +76,50 @@ namespace ProjetoLivraria
         protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
         {
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+        }
+
+        public Autores AutorSessao
+        {
+            get { return (Autores)Session["SessionAutorSelecionado"]; }
+            set { Session["SessionAutorSelecionado"] = value; }
+        }
+        public Editores EditorSessao
+        {
+            get { return (Editores)Session["SessionEditorSelecionado"]; }
+            set { Session["SessionEditorSelecionado"] = value; }
+        }
+        public Categorias CategoriaSessao
+        {
+            get { return (Categorias)Session["sessionCategoriaSelecionado"]; }
+            set { Session["sessionCategoriaSelecionado"] = value; }
+        }
+
+        protected void AnularSessoes()
+        {
+            AutorSessao = null;
+            EditorSessao = null;
+            CategoriaSessao = null;
+        }
+
+        protected void autorRedirect_ServerClick(object sender, EventArgs e)
+        {
+            AnularSessoes();
+            Response.Redirect("~/Livraria/GerenciamentoAutores");
+        }
+        protected void editorRedirect_ServerClick(object sender, EventArgs e)
+        {
+            AnularSessoes();
+            Response.Redirect("~/Livraria/GerenciamentoEditores");
+        }
+        protected void categoriaRedirect_ServerClick(object sender, EventArgs e)
+        {
+            AnularSessoes();
+            Response.Redirect("~/Livraria/GerenciamentoCategorias");
+        }
+        protected void livroRedirect_ServerClick(object sender, EventArgs e)
+        {
+            AnularSessoes();
+            Response.Redirect("~/Livraria/GerenciamentoLivros");
         }
     }
 

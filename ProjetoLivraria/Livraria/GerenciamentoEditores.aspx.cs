@@ -162,8 +162,10 @@ namespace ProjetoLivraria.Livraria
                     int liRowIndex = Convert.ToInt32(e.CommandArgument);
                     decimal ldcIdEditor = Convert.ToDecimal((this.gvGerenciamentoEditores.Rows[liRowIndex].FindControl("lblIdEditor") as Label).Text);
                     string lsNomeEditor = (this.gvGerenciamentoEditores.Rows[liRowIndex].FindControl("lblNomeEditor") as Label).Text;
+                    string lsEmailEditor = (this.gvGerenciamentoEditores.Rows[liRowIndex].FindControl("lblEmailEditor") as Label).Text;
+                    string lsUrlEditor = (this.gvGerenciamentoEditores.Rows[liRowIndex].FindControl("lblUrlEditor") as Label).Text; 
 
-                    Editores loEditor = new Editores(ldcIdEditor, lsNomeEditor, "", "");
+                    Editores loEditor = new Editores(ldcIdEditor, lsNomeEditor, lsNomeEditor, lsUrlEditor);
                     this.EditorSessao = loEditor;
 
                     Response.Redirect("/Livraria/GerenciamentoLivros");
@@ -175,16 +177,8 @@ namespace ProjetoLivraria.Livraria
 
         public Editores EditorSessao
         {
-            get
-            {
-                if (Session["EditorSessao"] == null)
-                    return null;
-                return (Editores)Session["EditorSessao"];
-            }
-            set
-            {
-                Session["EditorSessao"] = value;
-            }
+            get { return (Editores)Session["SessionEditorSelecionado"]; }
+            set { Session["SessionEditorSelecionado"] = value; }
         }
 
         protected void gvGerenciamentoEditores_PageIndexChanging(object sender, GridViewPageEventArgs e)
